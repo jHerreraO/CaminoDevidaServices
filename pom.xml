@@ -8,10 +8,10 @@
         <version>3.4.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.template</groupId>
-    <artifactId>securityTemplate</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>securityTemplate</name>
+    <groupId>com.revoktek.services</groupId>
+    <artifactId>caminoDeVida</artifactId>
+    <version>1.0</version>
+    <name>caminoDeVida</name>
     <description>Demo project for Spring Boot</description>
     <url/>
     <licenses>
