@@ -4,7 +4,7 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%style{%d{ISO8601}}{white} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{bright,yellow}: %msg%n%throwable" />
         </Console>
-        <RollingFile name="RollingFile" fileName="${sys:LOG_PATH}/abc-services-logger-log4j2.log"
+        <RollingFile name="RollingFile" fileName="${sys:LOG_PATH}/caminoDeVida-services-logger-log4j2.log"
                      filePattern="${sys:LOG_PATH}/$${date:yyyy-MM}/spring-boot-logger-log4j2-%d{-dd-MMMM-yyyy}-%i.log.gz">
             <PatternLayout pattern="%d %p %C{1.} [%t] %m%n" />
             <Policies>
@@ -19,7 +19,7 @@
             <AppenderRef ref="Console" />
             <AppenderRef ref="RollingFile" />
         </Root>
-        <Logger name="com.guyana.accessbordercontrol" level="trace" additivity="false">
+        <Logger name="com.revoktek.services" level="trace" additivity="false">
             <AppenderRef ref="Console" />
             <AppenderRef ref="RollingFile" />
         </Logger>

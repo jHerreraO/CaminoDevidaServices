@@ -57,7 +57,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             LoginDTO credentials = new LoginDTO();
             credentials.setUsername(username);
             credentials.setPassword(password);
-            credentials.setAuthority(authority);
 
             // Validation block
             validateParams(credentials);
@@ -82,11 +81,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         User usuario = (User) authResult.getPrincipal();
         LoginDTO credenciales = (LoginDTO) authResult.getDetails();
 
-        if (!usuario.getSimpleAuthoritiesStr().contains(credenciales.getAuthority())) {
-            response.addHeader("error", "Invalid authority");
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
 
         String token = jwtUtil.getToken(usuario.getUsername(),usuario.getSimpleAuthorities());
         String refreshToken = jwtUtil.getRefreshToken(usuario.getUsername());

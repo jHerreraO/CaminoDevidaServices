@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class User implements UserDetails {
 
+    //Datos base de Plantilla
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idUser;
@@ -39,6 +40,20 @@ public class User implements UserDetails {
     private List<Authority> authorities = new ArrayList<>();
     private boolean enabled;
     private String userRegister;
+
+    //Datos de Negocio
+    private Integer age;
+    private String names;
+    private String paternalSurname;
+    private String maternalSurname;
+    private String residencyCity;
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
+    private String dependents;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<GroupMember> groups = new ArrayList<>();
+
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
