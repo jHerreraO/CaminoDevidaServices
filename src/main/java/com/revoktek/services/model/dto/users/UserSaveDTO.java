@@ -14,5 +14,6 @@ public class UserSaveDTO {
     private String maternalSurname;
     private String residenceCity;
     private String dependents;
+    private String phone;
     private String role;
 }

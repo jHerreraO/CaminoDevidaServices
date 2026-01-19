@@ -49,10 +49,23 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
-    public void changeStatus(Long id) throws ModelNotFoundException {
-        User user = userRepository.findById(id).orElseThrow(() -> new ModelNotFoundException(User.class, id));
+    /**
+     * Cambia el estado (habilitado/deshabilitado) de un usuario.
+     *
+     * @param id ID del usuario.
+     * @return String con el nuevo estado.
+     * @throws ModelNotFoundException Si el usuario no existe.
+     */
+    public String changeStatus(Long id) throws ModelNotFoundException {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ModelNotFoundException(User.class, id));
+
         user.setEnabled(!user.isEnabled());
         userRepository.save(user);
+
+        String estatus = user.isEnabled() ? "habilitado" : "deshabilitado";
+        log.info("🟡 Usuario con ID {} está {}", id, estatus);
+        return estatus;
     }
 
     public void logLogin(User user, HttpServletRequest request) {
@@ -104,6 +117,7 @@ public class UserService implements UserDetailsService {
                 .username(dto.getUsername())
                 .password(bCryptPasswordEncoder.encode(dto.getPassword()))
                 .age(dto.getAge())
+                .phone(dto.getPhone())
                 .names(utilService.fixEncoding(dto.getNames()))
                 .paternalSurname(utilService.fixEncoding(dto.getPaternalSurname()))
                 .maternalSurname(utilService.fixEncoding(dto.getMaternalSurname()))
@@ -165,6 +179,93 @@ public class UserService implements UserDetailsService {
 
         return userRepository.findAll(spec, pageable);
     }
+
+    /**
+     * Actualiza los datos de negocio de un usuario existente.
+     * <p>
+     * Solo se modifican los campos que sean distintos de null,
+     * preservando la información existente.
+     *
+     * @param idUser           ID del usuario a actualizar.
+     * @param username         (Opcional) Nuevo username/email.
+     * @param age              (Opcional) Nueva edad.
+     * @param names            (Opcional) Nuevos nombres.
+     * @param paternalSurname  (Opcional) Nuevo apellido paterno.
+     * @param maternalSurname  (Opcional) Nuevo apellido materno.
+     * @param residenceCity    (Opcional) Nueva ciudad de residencia.
+     * @param dependents       (Opcional) Información de dependientes.
+     *
+     * @throws DuplicateModelException si el username ya existe.
+     * @throws IllegalArgumentException si el usuario no existe.
+     */
+    public void updateUser(Long idUser,
+                           String username,
+                           Integer age,
+                           String names,
+                           String paternalSurname,
+                           String maternalSurname,
+                           String residenceCity,
+                           String phone,
+                           String dependents)
+            throws DuplicateModelException {
+
+        // 1. Buscar usuario
+        User user = userRepository.findById(idUser)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("User with ID " + idUser + " not found"));
+
+        // 2. Actualizar username (validando duplicados)
+        if (username != null && !username.equals(user.getUsername())) {
+            if (userRepository.existsByUsername(username)) {
+                throw new DuplicateModelException(User.class, username, "username");
+            }
+            user.setUsername(username);
+        }
+
+        if (phone != null) {
+            user.setPhone(phone);
+        }
+
+        // 3. Actualizar edad
+        if (age != null) {
+            user.setAge(age);
+        }
+
+        //  4. Actualizar nombres
+        if (names != null) {
+            user.setNames(names);
+        }
+
+        //  5. Apellidos
+        if (paternalSurname != null) {
+            user.setPaternalSurname(paternalSurname);
+        }
+
+        if (maternalSurname != null) {
+            user.setMaternalSurname(maternalSurname);
+        }
+
+        // 6. Ciudad de residencia
+        if (residenceCity != null) {
+            user.setResidencyCity(residenceCity);
+        }
+
+        // 7. Dependientes
+        if (dependents != null) {
+            user.setDependents(dependents);
+        }
+
+        // 8. Guardar cambios
+        userRepository.save(user);
+
+        log.info("🟡 Usuario {} (ID: {}) actualizado con éxito", user.getUsername(), user.getIdUser());
+    }
+
+
+
+
+
+
 
 
 

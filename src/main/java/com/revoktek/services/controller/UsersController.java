@@ -92,6 +92,63 @@ public class UsersController {
         return ResponseEntity.ok(userPage);
     }
 
+    /**
+     * Cambia el estado habilitado/deshabilitado de un usuario.
+     *
+     * @param idUser ID del usuario cuyo estado cambiará.
+     * @return Mensaje con el nuevo estado del usuario.
+     * @throws ModelNotFoundException Si el usuario no existe.
+     */
+    @PatchMapping("/{idUser}")
+    public ResponseEntity<Message> changeStatus(@PathVariable Long idUser) throws ModelNotFoundException {
+        String estatus = userService.changeStatus(idUser);
+        return ResponseEntity.ok(new Message(true, "El usuario ahora está " + estatus));
+    }
+
+    /**
+     * Actualiza los datos de un usuario existente.
+     *
+     * @param idUser          ID del usuario a actualizar.
+     * @param username        (Opcional) Nuevo username/email.
+     * @param age             (Opcional) Nueva edad.
+     * @param names           (Opcional) Nuevos nombres.
+     * @param paternalSurname (Opcional) Nuevo apellido paterno.
+     * @param maternalSurname (Opcional) Nuevo apellido materno.
+     * @param residenceCity   (Opcional) Nueva ciudad de residencia.
+     * @param dependents      (Opcional) Dependientes.
+     *
+     * @return Mensaje de confirmación.
+     *
+     * @throws DuplicateModelException Si el username ya existe.
+     */
+    @PutMapping("/{idUser}")
+    public ResponseEntity<Message> updateById(
+            @PathVariable Long idUser,
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) Integer age,
+            @RequestParam(required = false) String names,
+            @RequestParam(required = false) String paternalSurname,
+            @RequestParam(required = false) String maternalSurname,
+            @RequestParam(required = false) String residenceCity,
+            @RequestParam(required = false) String phone,
+            @RequestParam(required = false) String dependents
+    ) throws DuplicateModelException {
+
+        userService.updateUser(
+                idUser,
+                username,
+                age,
+                names,
+                paternalSurname,
+                maternalSurname,
+                residenceCity,
+                phone,
+                dependents
+        );
+
+        return ResponseEntity.ok(new Message(true, "Usuario actualizado con éxito"));
+    }
+
 
 
 
