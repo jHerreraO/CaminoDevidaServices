@@ -44,6 +44,7 @@ public class User implements UserDetails {
     //Datos de Negocio
     private Integer age;
     private String names;
+    private String phone;
     private String paternalSurname;
     private String maternalSurname;
     private String residencyCity;

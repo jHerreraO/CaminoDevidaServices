@@ -47,9 +47,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             MultipartHttpServletRequest multipartRequest = resolver.resolveMultipart(request);
             String username = multipartRequest.getParameter("username");
             String password = multipartRequest.getParameter("password");
-            String authority = multipartRequest.getParameter("authority");
 
-            if (username == null || password == null || authority == null) {
+            if (username == null || password == null ) {
                 throw new AuthenticationServiceException("Username or password parameter is missing");
             }
 

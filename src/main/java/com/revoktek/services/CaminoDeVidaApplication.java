@@ -33,10 +33,10 @@ public class CaminoDeVidaApplication {
 			log.info("environment active: " + Arrays.toString(environment.getActiveProfiles()));
 			log.info("checking if exists default users");
 			User defaultAdmin = new User();
-			defaultAdmin.setUsername("admin@gmail.com");
+			defaultAdmin.setUsername("admincaminodevida@gmail.com");
 
 			if (userService.notExistsByUsername(defaultAdmin.getUsername())) {
-				defaultAdmin.setPassword("admin1234");
+				defaultAdmin.setPassword("administracion2026");
 				defaultAdmin.setEnabled(true);
 				List<Authority> permissions = new ArrayList<>();
 				permissions.add(Authority.ADMIN);

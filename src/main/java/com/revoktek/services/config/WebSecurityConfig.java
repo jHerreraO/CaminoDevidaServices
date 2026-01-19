@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -60,6 +61,8 @@ public class WebSecurityConfig {
                 .securityMatcher("/api/**")
                 .authorizeHttpRequests(matcher ->
                         matcher
+                                .requestMatchers(HttpMethod.GET, API_PUBLIC_PATTERN).permitAll()
+                                .requestMatchers("/api/users/save").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
