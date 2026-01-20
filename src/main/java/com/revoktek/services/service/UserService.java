@@ -118,11 +118,11 @@ public class UserService implements UserDetailsService {
                 .password(bCryptPasswordEncoder.encode(dto.getPassword()))
                 .age(dto.getAge())
                 .phone(dto.getPhone())
-                .names(utilService.fixEncoding(dto.getNames()))
-                .paternalSurname(utilService.fixEncoding(dto.getPaternalSurname()))
-                .maternalSurname(utilService.fixEncoding(dto.getMaternalSurname()))
-                .residencyCity(utilService.fixEncoding(dto.getResidenceCity()))
-                .dependents(utilService.fixEncoding(dto.getDependents()))
+                .names(dto.getNames())
+                .paternalSurname(dto.getPaternalSurname())
+                .maternalSurname(dto.getMaternalSurname())
+                .residencyCity(dto.getResidenceCity())
+                .dependents(dto.getDependents())
                 .authorities(List.of(Authority.valueOf(dto.getRole())))
                 .build();
         user.setUserRegister(utilService.userNameInSession() != null ? utilService.userNameInSession() : null);

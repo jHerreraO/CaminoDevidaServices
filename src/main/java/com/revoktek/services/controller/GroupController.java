@@ -80,6 +80,37 @@ public class GroupController {
         );
     }
 
+    /**
+     * Actualiza parcialmente los datos de un grupo existente.
+     *
+     * <p>
+     * Los campos enviados en el cuerpo de la petición son opcionales.
+     * Solo los valores presentes serán modificados.
+     * </p>
+     *
+     * <p>
+     * Las validaciones de existencia y negocio son delegadas al servicio.
+     * </p>
+     *
+     * @param groupId ID del grupo a actualizar
+     * @param dto     Datos a modificar
+     * @return Mensaje de confirmación de la operación
+     * @throws ModelNotFoundException       Si el grupo no existe
+     * @throws EnumInvalidArgumentException Si el valor de dayOfWeek no es válido
+     */
+    @PutMapping("/{groupId}")
+    public ResponseEntity<Message> update(
+            @PathVariable Long groupId,
+            @RequestBody GroupSaveDTO dto
+    ) throws ModelNotFoundException, EnumInvalidArgumentException {
+
+        groupService.update(dto, groupId);
+
+        return ResponseEntity.ok(
+                new Message(true, "Group updated successfully")
+        );
+    }
+
 
 
 

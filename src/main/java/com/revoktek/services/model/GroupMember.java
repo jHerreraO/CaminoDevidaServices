@@ -1,4 +1,5 @@
 package com.revoktek.services.model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.revoktek.services.model.enums.GroupRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -27,7 +28,9 @@ public class GroupMember {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id", nullable = false)
+    @JsonIgnore
     private Group group;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

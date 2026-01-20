@@ -53,6 +53,7 @@ public class User implements UserDetails {
     private String dependents;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<GroupMember> groups = new ArrayList<>();
 
     @JsonIgnore

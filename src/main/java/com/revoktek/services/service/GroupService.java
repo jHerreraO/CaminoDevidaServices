@@ -171,5 +171,80 @@ public class GroupService {
         log.info("Instructores asignados al grupo {}", dto.getGroupId());
     }
 
+    /**
+     * Actualiza de forma parcial los datos de un grupo existente.
+     *
+     * <p>
+     * Reglas de negocio:
+     * <ul>
+     *   <li>El grupo debe existir</li>
+     *   <li>Los campos del DTO son opcionales</li>
+     *   <li>Solo se actualizan los valores presentes en el DTO</li>
+     *   <li>El día de la semana se valida contra el enum {@link DayOfWeek}</li>
+     * </ul>
+     *
+     * <p>
+     * Consideraciones técnicas:
+     * <ul>
+     *   <li>La entidad se obtiene desde base de datos para mantenerla administrada por JPA</li>
+     *   <li>No se reconstruye la entidad (evita pérdida de relaciones y PK)</li>
+     *   <li>Se aprovecha el dirty checking de Hibernate</li>
+     * </ul>
+     *
+     * @param dto     DTO con los datos a actualizar (parcial)
+     * @param groupId ID del grupo a modificar
+     * @throws ModelNotFoundException       Si el grupo no existe
+     * @throws EnumInvalidArgumentException Si el valor de dayOfWeek no es válido
+     */
+    @Transactional
+    public void update(GroupSaveDTO dto, Long groupId)
+            throws EnumInvalidArgumentException, ModelNotFoundException {
+
+        // 1️⃣ Validar existencia del grupo
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new ModelNotFoundException(Group.class, groupId));
+
+        // 2️⃣ Actualizar campos simples solo si vienen en el DTO
+        if (dto.getName() != null) {
+            group.setName(dto.getName());
+        }
+
+        if (dto.getAddress() != null) {
+            group.setAddress(dto.getAddress());
+        }
+
+        if (dto.getPhone() != null) {
+            group.setPhone(dto.getPhone());
+        }
+
+        if (dto.getHour() != null) {
+            group.setHour(dto.getHour());
+        }
+
+        // 3️⃣ Conversión y validación del día de la semana
+        if (dto.getDayOfWeek() != null) {
+            try {
+                DayOfWeek dayOfWeek = DayOfWeek.valueOf(
+                        dto.getDayOfWeek().toUpperCase(Locale.ROOT)
+                );
+                group.setDayOfWeek(dayOfWeek);
+            } catch (Exception e) {
+                throw new EnumInvalidArgumentException(
+                        "dayOfWeek",
+                        dto.getDayOfWeek(),
+                        DayOfWeek.class
+                );
+            }
+        }
+
+        // 4️⃣ Persistencia
+        // Hibernate detecta cambios automáticamente (dirty checking)
+        groupRepository.save(group);
+
+        log.info("🟡 Grupo actualizado con éxito. ID: {}", groupId);
+    }
+
+
+
 
 }
