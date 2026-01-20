@@ -8,6 +8,8 @@ import com.revoktek.services.model.dto.groups.GroupAssignInstructorsDTO;
 import com.revoktek.services.model.dto.groups.GroupListDTO;
 import com.revoktek.services.model.dto.groups.GroupSaveDTO;
 import com.revoktek.services.model.dto.groups.PublicGroupDTO;
+import com.revoktek.services.model.dto.memberGroups.GroupDetailDTO;
+import com.revoktek.services.model.dto.memberGroups.GroupUserDTO;
 import com.revoktek.services.model.enums.Authority;
 import com.revoktek.services.model.enums.GroupRole;
 import com.revoktek.services.repository.GroupMemberRepository;
@@ -401,6 +403,49 @@ public class GroupService {
                 })
                 .toList();
     }
+
+    @Transactional(readOnly = true)
+    public GroupDetailDTO findDetailById(Long groupId)
+            throws ModelNotFoundException {
+
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new ModelNotFoundException(Group.class, groupId));
+
+        // Instructores
+        List<GroupUserDTO> instructors = group.getMembers().stream()
+                .filter(m -> m.getRole() == GroupRole.INSTRUCTOR)
+                .map(m -> mapToGroupUserDTO(m.getUser()))
+                .toList();
+
+        // Miembros
+        List<GroupUserDTO> members = group.getMembers().stream()
+                .filter(m -> m.getRole() == GroupRole.MEMBER)
+                .map(m -> mapToGroupUserDTO(m.getUser()))
+                .toList();
+
+        return GroupDetailDTO.builder()
+                .idGroup(group.getIdGroup())
+                .name(group.getName())
+                .address(group.getAddress())
+                .phone(group.getPhone())
+                .hour(group.getHour())
+                .instructors(instructors)
+                .members(members)
+                .build();
+    }
+
+
+    private GroupUserDTO mapToGroupUserDTO(User user) {
+        return GroupUserDTO.builder()
+                .age(user.getAge())
+                .names(user.getNames())
+                .phone(user.getPhone())
+                .paternalSurname(user.getPaternalSurname())
+                .maternalSurname(user.getMaternalSurname())
+                .residencyCity(user.getResidencyCity())
+                .build();
+    }
+
 
 
 

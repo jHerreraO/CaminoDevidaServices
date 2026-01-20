@@ -1,10 +1,9 @@
 package com.revoktek.services.controller;
-
-import com.revoktek.services.model.Group;
 import com.revoktek.services.model.dto.groups.GroupAssignInstructorsDTO;
 import com.revoktek.services.model.dto.groups.GroupListDTO;
 import com.revoktek.services.model.dto.groups.GroupSaveDTO;
 import com.revoktek.services.model.dto.groups.PublicGroupDTO;
+import com.revoktek.services.model.dto.memberGroups.GroupDetailDTO;
 import com.revoktek.services.rulesException.EnumInvalidArgumentException;
 import com.revoktek.services.rulesException.ModelNotFoundException;
 import com.revoktek.services.service.GroupService;
@@ -20,6 +19,30 @@ import java.util.List;
 @RequestMapping("/api/group")
 public class GroupController {
     private final GroupService groupService;
+
+    /**
+     * Obtiene el detalle completo de un grupo:
+     * - Información básica del grupo
+     * - Instructores asignados
+     * - Miembros inscritos
+     *
+     * Endpoint pensado para vista detallada.
+     */
+    @GetMapping("/{groupId}")
+    public ResponseEntity<Message> findGroupDetail(
+            @PathVariable Long groupId
+    ) throws ModelNotFoundException {
+        GroupDetailDTO data = groupService.findDetailById(groupId);
+
+        return ResponseEntity.ok(
+                new Message(
+                        true,
+                        "Detalles del grupo",
+                        data
+                )
+        );
+    }
+
 
     /**
      * Obtiene el listado preliminar de todos los grupos.
