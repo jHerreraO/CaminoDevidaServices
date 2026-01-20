@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +24,13 @@ public class Group {
     private String name;
     private String address;
     private String phone;
-    private String dayOfWeek;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private DayOfWeek dayOfWeek;
     private LocalTime hour;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "idUserResponsible")
+    @JoinColumn(name = "user_id_responsible", referencedColumnName = "idUser")
     private User userResponsible;
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)

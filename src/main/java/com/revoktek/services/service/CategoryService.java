@@ -20,7 +20,7 @@ public class CategoryService {
     }
 
     private Boolean existByName(String name){
-        return categoryRepository.existByNameCategory(name);
+        return categoryRepository.existsByNameCategory(name);
     }
 
     public void save(String namecategory){

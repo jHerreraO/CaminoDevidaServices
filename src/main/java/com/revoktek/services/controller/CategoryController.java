@@ -3,14 +3,14 @@ package com.revoktek.services.controller;
 import com.revoktek.services.service.CategoryService;
 import com.revoktek.services.utils.Message;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
 @RequiredArgsConstructor
-@Service
-@Log4j2
+@RequestMapping("/api/category")
 public class CategoryController {
     private final CategoryService categoryService;
 

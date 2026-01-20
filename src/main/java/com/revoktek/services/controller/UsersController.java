@@ -149,6 +149,16 @@ public class UsersController {
         return ResponseEntity.ok(new Message(true, "Usuario actualizado con éxito"));
     }
 
+    /**
+     * Obtiene la lista de todas los usuarios con rol Instructor.
+     *
+     * @return ResponseEntity con un mensaje de éxito y la lista de empresas en el campo 'data'.
+     */
+    @GetMapping("/findInstructors")
+    public ResponseEntity<Message> findAll() {
+        return ResponseEntity.ok(new Message(true, "Instructores Registados", userService.findAllInstructors()));
+    }
+
 
 
 

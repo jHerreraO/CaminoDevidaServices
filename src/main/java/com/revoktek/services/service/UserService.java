@@ -261,6 +261,10 @@ public class UserService implements UserDetailsService {
         log.info("🟡 Usuario {} (ID: {}) actualizado con éxito", user.getUsername(), user.getIdUser());
     }
 
+    public List<User> findAllInstructors(){
+        return userRepository.findByAuthoritiesContaining(Authority.INSTRUCTOR);
+    }
+
 
 
 
