@@ -4,6 +4,7 @@ import com.revoktek.services.model.Group;
 import com.revoktek.services.model.dto.groups.GroupAssignInstructorsDTO;
 import com.revoktek.services.model.dto.groups.GroupListDTO;
 import com.revoktek.services.model.dto.groups.GroupSaveDTO;
+import com.revoktek.services.model.dto.groups.PublicGroupDTO;
 import com.revoktek.services.rulesException.EnumInvalidArgumentException;
 import com.revoktek.services.rulesException.ModelNotFoundException;
 import com.revoktek.services.service.GroupService;
@@ -142,6 +143,21 @@ public class GroupController {
                         "Grupos asignados al instructor",
                         groups
                 )
+        );
+    }
+
+    /**
+     * Obtiene grupos públicos filtrados por categoría.
+     *
+     * Ejemplo:
+     * GET /api/group/findGroupByCategory/Alpha
+     */
+    @GetMapping("/findGroupByCategory/{category}")
+    public ResponseEntity<List<PublicGroupDTO>> findByCategory(
+            @PathVariable String category
+    ) {
+        return ResponseEntity.ok(
+                groupService.findPublicGroupsByCategory(category)
         );
     }
 

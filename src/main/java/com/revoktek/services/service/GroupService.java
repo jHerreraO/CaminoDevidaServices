@@ -7,6 +7,7 @@ import com.revoktek.services.model.User;
 import com.revoktek.services.model.dto.groups.GroupAssignInstructorsDTO;
 import com.revoktek.services.model.dto.groups.GroupListDTO;
 import com.revoktek.services.model.dto.groups.GroupSaveDTO;
+import com.revoktek.services.model.dto.groups.PublicGroupDTO;
 import com.revoktek.services.model.enums.Authority;
 import com.revoktek.services.model.enums.GroupRole;
 import com.revoktek.services.repository.GroupMemberRepository;
@@ -20,6 +21,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Locale;
 
@@ -286,6 +288,174 @@ public class GroupService {
                 })
                 .toList();
     }
+
+    @Transactional(readOnly = true)
+    public List<PublicGroupDTO> findPublicGroupsByCategory(String categoryName) {
+
+        // Buscamos grupos cuyo nombre contenga el nombre de la categoría
+        List<Group> groups =
+                groupRepository.findByNameContainingIgnoreCase(categoryName);
+
+        return groups.stream()
+                .map(group -> {
+
+                    List<String> instructors =
+                            group.getMembers() == null
+                                    ? List.of()
+                                    : group.getMembers().stream()
+                                    .filter(m -> m.getRole() == GroupRole.INSTRUCTOR)
+                                    .map(m -> m.getUser().getNames() + " " + m.getUser().getPaternalSurname() + " " +m.getUser().getMaternalSurname() ) // o nombre público
+                                    .toList();
+
+                    return PublicGroupDTO.builder()
+                            .idGroup(group.getIdGroup())
+                            .name(group.getName())
+                            .address(group.getAddress())
+                            .phone(group.getPhone())
+                            .dayOfWeek(group.getDayOfWeek().name())
+                            .hour(group.getHour())
+                            .instructors(instructors) // vacío si no hay
+                            .build();
+                })
+                .toList();
+    }
+
+
+    /**
+     * Inicializa los grupos base del sistema.
+     *
+     * Este método se ejecuta al arranque de la aplicación y:
+     * - Verifica si los grupos ya existen en BD
+     * - Crea únicamente los grupos faltantes
+     * - No asigna instructores ni miembros
+     * - Garantiza idempotencia (puede ejecutarse múltiples veces sin duplicar datos)
+     */
+    @Transactional
+    public void initializeDefaultGroups() {
+        List<Group> defaultGroups = List.of(
+                Group.builder()
+                        .name("Alpha")
+                        .address("CDEV")
+                        .phone("5517871515")
+                        .dayOfWeek(DayOfWeek.TUESDAY)
+                        .hour(LocalTime.of(19, 0))
+                        .build(),
+
+                Group.builder()
+                        .name("Alpha Jóvenes")
+                        .address("CDEV")
+                        .phone("7773639508")
+                        .dayOfWeek(DayOfWeek.FRIDAY)
+                        .hour(LocalTime.of(19, 0))
+                        .build(),
+
+                Group.builder()
+                        .name("Teología 1")
+                        .address("Nueva Tabachín #24, Col. Tlaltenango")
+                        .phone("7775643882")
+                        .dayOfWeek(DayOfWeek.TUESDAY)
+                        .hour(LocalTime.of(19, 0))
+                        .build(),
+
+                Group.builder()
+                        .name("Teología 1")
+                        .address("Plaza Novum Local 61, Jiutepec")
+                        .phone("7772405143")
+                        .dayOfWeek(DayOfWeek.THURSDAY)
+                        .hour(LocalTime.of(19, 0))
+                        .build(),
+
+                Group.builder()
+                        .name("Teología 2")
+                        .address("CDEV")
+                        .phone("7771033362")
+                        .dayOfWeek(DayOfWeek.MONDAY)
+                        .hour(LocalTime.of(18, 30))
+                        .build(),
+
+                Group.builder()
+                        .name("Teología 2")
+                        .address("Elvert 1 Col. Lomas de Jiutepec")
+                        .phone("7775654251")
+                        .dayOfWeek(DayOfWeek.THURSDAY)
+                        .hour(LocalTime.of(19, 30))
+                        .build(),
+
+                Group.builder()
+                        .name("Crecimiento Espiritual")
+                        .address("Cafetería CDEV")
+                        .phone("")
+                        .dayOfWeek(DayOfWeek.THURSDAY)
+                        .hour(LocalTime.of(18, 30))
+                        .build(),
+
+                Group.builder()
+                        .name("Matrimonios")
+                        .address("Copalera Esq. con Cuauhtémoc, Col. Lomas de Cortés")
+                        .phone("7773701681")
+                        .dayOfWeek(DayOfWeek.FRIDAY)
+                        .hour(LocalTime.of(19, 30))
+                        .build(),
+
+                Group.builder()
+                        .name("Matrimonios")
+                        .address("San Gaspar 1, Villas Arosa, Pedregal de las Fuentes, Jiutepec")
+                        .phone("5551939147")
+                        .dayOfWeek(DayOfWeek.FRIDAY)
+                        .hour(LocalTime.of(19, 0))
+                        .build(),
+
+                Group.builder()
+                        .name("Escuela para Padres")
+                        .address("Cafetería de CDEV")
+                        .phone("7771842099")
+                        .dayOfWeek(DayOfWeek.FRIDAY)
+                        .hour(LocalTime.of(19, 0))
+                        .build(),
+
+                Group.builder()
+                        .name("Hombres")
+                        .address("CDEV")
+                        .phone("5544498397")
+                        .dayOfWeek(DayOfWeek.SATURDAY)
+                        .hour(LocalTime.of(7, 0))
+                        .build(),
+
+                Group.builder()
+                        .name("Mujeres")
+                        .address("CDEV")
+                        .phone("7773757879")
+                        .dayOfWeek(DayOfWeek.SATURDAY)
+                        .hour(LocalTime.of(8, 0))
+                        .build(),
+
+                Group.builder()
+                        .name("GP Fit")
+                        .address("Parque Chapultepec")
+                        .phone("7773843556")
+                        .dayOfWeek(DayOfWeek.SATURDAY)
+                        .hour(LocalTime.of(8, 0))
+                        .build()
+        );
+
+
+        for (Group group : defaultGroups) {
+
+            boolean exists = groupRepository.existsByNameAndDayOfWeek(
+                    group.getName(),
+                    group.getDayOfWeek()
+            );
+
+            if (exists) {
+                log.info("🟡 Grupo ya existe, se omite inicialización: {}", group.getName());
+                continue;
+            }
+
+            groupRepository.save(group);
+            log.info("🟢 Grupo inicializado: {}", group.getName());
+        }
+    }
+
 
 
 }

@@ -7,7 +7,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.concurrent.CancellationException;
 
 @RequiredArgsConstructor
 @Service
@@ -28,6 +27,38 @@ public class CategoryService {
             Category category = Category.builder().nameCategory(namecategory).build();
             categoryRepository.save(category);
         }
+    }
+
+    public void deleteById(Long idCategory){
+        categoryRepository.deleteById(idCategory);
+    }
+
+    /**
+     * Inicializa las categorías base del sistema.
+     *
+     * Reglas:
+     * - No duplica categorías
+     * - Se valida por nombre
+     * - Método idempotente (puede ejecutarse múltiples veces)
+     */
+    public void initDefaultCategories() {
+
+        log.info("🔵 Initializing default categories");
+
+        List<String> defaultCategories = List.of(
+                "Teología",
+                "Alpha",
+                "Mujeres",
+                "Hombres",
+                "Escuela para padres",
+                "Matrimonios",
+                "Crecimiento Espiritual",
+                "GP Fit"
+        );
+
+        defaultCategories.forEach(this::save);
+
+        log.info("🟢 Default categories checked or created successfully");
     }
 
 

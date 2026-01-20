@@ -2,6 +2,8 @@ package com.revoktek.services;
 
 import com.revoktek.services.model.User;
 import com.revoktek.services.model.enums.Authority;
+import com.revoktek.services.service.CategoryService;
+import com.revoktek.services.service.GroupService;
 import com.revoktek.services.service.UserService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +27,8 @@ public class CaminoDeVidaApplication {
 
 	@Bean
 	public CommandLineRunner initService(
-										 Environment environment, UserService userService,
+										 Environment environment, UserService userService, GroupService groupService,
+                                        CategoryService categoryService,
 										@Value("${spring.datasource.url}") String dataSourceUrl) {
 		return args -> {
 			log.info("==========INIT LOG==========");
@@ -43,9 +46,10 @@ public class CaminoDeVidaApplication {
 				defaultAdmin.setAuthorities(permissions);
 				userService.save(defaultAdmin);
 
-
 			}
 			log.info("🟢 -- Default Users checked or created successfully");
+            categoryService.initDefaultCategories();
+            groupService.initializeDefaultGroups();
 		};
 	}
 
