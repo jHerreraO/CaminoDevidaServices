@@ -9,6 +9,7 @@ import com.revoktek.services.model.dto.groups.GroupListDTO;
 import com.revoktek.services.model.dto.groups.GroupSaveDTO;
 import com.revoktek.services.model.enums.Authority;
 import com.revoktek.services.model.enums.GroupRole;
+import com.revoktek.services.repository.GroupMemberRepository;
 import com.revoktek.services.repository.GroupRepository;
 import com.revoktek.services.repository.UserRepository;
 import com.revoktek.services.rulesException.EnumInvalidArgumentException;
@@ -30,6 +31,7 @@ public class GroupService {
     private final CategoryService categoryService;
     private final UtilService utilService;
     private final UserRepository userRepository;
+    private final GroupMemberRepository groupMemberRepository;
 
     /**
      * Obtiene un listado preliminar de todos los grupos registrados.
@@ -244,7 +246,46 @@ public class GroupService {
         log.info("🟡 Grupo actualizado con éxito. ID: {}", groupId);
     }
 
+    /**
+     * Obtiene los grupos asignados al instructor autenticado.
+     *
+     * Reglas de negocio:
+     * - Solo usuarios con rol INSTRUCTOR pueden acceder
+     * - Solo se retornan grupos donde el usuario esté asignado como INSTRUCTOR
+     * - Se devuelve información básica del grupo (DTO), evitando ciclos y proxies Hibernate
+     *
+     * @return lista de grupos asignados al instructor en sesión
+     */
+    @Transactional(readOnly = true)
+    public List<GroupListDTO> findMyInstructorGroups() {
 
+        User instructor = utilService.userInSession();
+
+        // Validación de rol a nivel negocio
+        if (!instructor.getSimpleAuthorities().contains(Authority.INSTRUCTOR)) {
+            throw new IllegalStateException("El usuario no tiene rol INSTRUCTOR");
+        }
+
+        return groupMemberRepository
+                .findByUserIdUserAndRole(
+                        instructor.getIdUser(),
+                        GroupRole.INSTRUCTOR
+                )
+                .stream()
+                .map(member -> {
+                    Group group = member.getGroup();
+
+                    return GroupListDTO.builder()
+                            .idGroup(group.getIdGroup())
+                            .name(group.getName())
+                            .address(group.getAddress())
+                            .phone(group.getPhone())
+                            .dayOfWeek(group.getDayOfWeek().name())
+                            .hour(group.getHour())
+                            .build();
+                })
+                .toList();
+    }
 
 
 }

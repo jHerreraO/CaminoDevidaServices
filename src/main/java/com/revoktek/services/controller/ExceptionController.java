@@ -32,6 +32,11 @@ import java.util.List;
 public class ExceptionController {
     private static final Logger log = LoggerFactory.getLogger(ExceptionController.class);
 
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<Message> IllegalStateException(IllegalStateException ise) {
+        log.error("An error occurred while processing the request", ise);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Message(false, ise.getMessage() ,""));
+    }
 
     @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<?> methodNotFoundException() {

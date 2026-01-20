@@ -1,6 +1,8 @@
 package com.revoktek.services.controller;
 
+import com.revoktek.services.model.Group;
 import com.revoktek.services.model.dto.groups.GroupAssignInstructorsDTO;
+import com.revoktek.services.model.dto.groups.GroupListDTO;
 import com.revoktek.services.model.dto.groups.GroupSaveDTO;
 import com.revoktek.services.rulesException.EnumInvalidArgumentException;
 import com.revoktek.services.rulesException.ModelNotFoundException;
@@ -9,6 +11,8 @@ import com.revoktek.services.utils.Message;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -108,6 +112,36 @@ public class GroupController {
 
         return ResponseEntity.ok(
                 new Message(true, "Group updated successfully")
+        );
+    }
+
+    /**
+     * Obtiene los grupos asignados al instructor actualmente autenticado.
+     *
+     * ✔ El usuario se obtiene desde la sesión (no desde el request).
+     * ✔ Solo instructores pueden acceder a esta información.
+     * ✔ No devuelve todos los grupos del sistema, únicamente
+     *   aquellos donde el instructor está asignado como INSTRUCTOR.
+     *
+     * Nota de diseño:
+     * - El controller no contiene lógica de negocio.
+     * - Las validaciones de rol y sesión viven en el service.
+     *
+     * @return ResponseEntity con mensaje y lista de grupos del instructor
+     */
+    @GetMapping("/findInstructorGroups")
+    public ResponseEntity<Message> getMyInstructorGroups() {
+
+        List<GroupListDTO> groups = groupService.findMyInstructorGroups();
+        // El id del instructor se obtiene internamente desde sesión
+        // mediante utilService.userInSession()
+
+        return ResponseEntity.ok(
+                new Message(
+                        true,
+                        "Grupos asignados al instructor",
+                        groups
+                )
         );
     }
 
