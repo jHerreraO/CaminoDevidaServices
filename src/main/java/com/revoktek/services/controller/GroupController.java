@@ -147,6 +147,26 @@ public class GroupController {
     }
 
     /**
+     * 📌 Obtiene los grupos en los que el usuario autenticado está inscrito.
+     *
+     * - Usa la sesión del usuario
+     * - No requiere parámetros
+     */
+    @GetMapping("/findMemberGroups")
+    public ResponseEntity<Message> findMyGroups() {
+
+        List<GroupListDTO> groups = groupService.findMyGroups();
+
+        return ResponseEntity.ok(
+                new Message(
+                        true,
+                        "Grupos a los que estas suscrito",
+                        groups
+                )
+        );
+    }
+
+    /**
      * Obtiene grupos públicos filtrados por categoría.
      *
      * Ejemplo:

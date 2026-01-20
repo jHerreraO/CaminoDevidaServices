@@ -363,6 +363,46 @@ public class GroupService {
                 user.getIdUser(), group.getIdGroup());
     }
 
+    /**
+     * Obtiene los grupos en los que el usuario autenticado está inscrito como miembro.
+     *
+     * Reglas:
+     * - El usuario se obtiene desde la sesión
+     * - Solo se devuelven grupos donde el rol sea MEMBER
+     * - No expone grupos ajenos
+     *
+     * @return lista de grupos inscritos
+     */
+    @Transactional(readOnly = true)
+    public List<GroupListDTO> findMyGroups() {
+
+        User user = utilService.userInSession();
+        if (user == null) {
+            throw new IllegalStateException("Usuario no autenticado");
+        }
+
+        List<GroupMember> memberships =
+                groupMemberRepository.findByUserIdUserAndRole(
+                        user.getIdUser(),
+                        GroupRole.MEMBER
+                );
+
+        return memberships.stream()
+                .map(member -> {
+                    Group group = member.getGroup();
+                    return GroupListDTO.builder()
+                            .idGroup(group.getIdGroup())
+                            .name(group.getName())
+                            .address(group.getAddress())
+                            .phone(group.getPhone())
+                            .dayOfWeek(group.getDayOfWeek().name())
+                            .hour(group.getHour())
+                            .build();
+                })
+                .toList();
+    }
+
+
 
     /**
      * Inicializa los grupos base del sistema.
