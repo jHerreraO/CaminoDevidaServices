@@ -161,6 +161,24 @@ public class GroupController {
         );
     }
 
+    /**
+     * 📌 Inscribe al usuario autenticado al grupo indicado.
+     *
+     * - El usuario se obtiene desde la sesión
+     * - El grupo se recibe como request param
+     * - No permite duplicados
+     */
+    @PostMapping("/join")
+    public ResponseEntity<Message> joinGroup(
+            @RequestParam Long idGroup
+    ) throws ModelNotFoundException {
+        groupService.joinGroup(idGroup);
+        return ResponseEntity.ok(
+                new Message(true, "Inscripcion realizada","")
+        );
+    }
+
+
 
 
 

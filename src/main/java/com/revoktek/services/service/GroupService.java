@@ -320,6 +320,49 @@ public class GroupService {
                 .toList();
     }
 
+    /**
+     * Inscribe al usuario autenticado como MIEMBRO en un grupo.
+     *
+     * Reglas:
+     * - El usuario debe estar autenticado
+     * - El grupo debe existir
+     * - No permite duplicados
+     * - El rol asignado es MEMBER
+     */
+    @Transactional
+    public void joinGroup(Long idGroup) throws ModelNotFoundException {
+        User user = utilService.userInSession();
+
+        Group group = groupRepository.findById(idGroup)
+                .orElseThrow(() ->
+                        new ModelNotFoundException(Group.class, idGroup)
+                );
+
+        // Verificamos si ya está inscrito
+        boolean alreadyMember = group.getMembers().stream()
+                .anyMatch(m ->
+                        m.getUser().getIdUser().equals(user.getIdUser())
+                );
+
+        if (alreadyMember) {
+            log.info("Usuario {} ya está inscrito en el grupo {}",
+                    user.getIdUser(), group.getIdGroup());
+            return; // idempotente
+        }
+
+        GroupMember member = GroupMember.builder()
+                .group(group)
+                .user(user)
+                .role(GroupRole.MEMBER)
+                .build();
+
+        group.getMembers().add(member);
+        groupRepository.save(group);
+
+        log.info("🟢 Usuario {} inscrito en el grupo {}",
+                user.getIdUser(), group.getIdGroup());
+    }
+
 
     /**
      * Inicializa los grupos base del sistema.
