@@ -446,6 +446,55 @@ public class GroupService {
                 .build();
     }
 
+    /**
+     * Permite al usuario autenticado salirse de un grupo como MIEMBRO.
+     *
+     * Reglas:
+     * - El usuario debe estar autenticado
+     * - El grupo debe existir
+     * - Solo aplica para rol MEMBER
+     * - Operación idempotente
+     */
+    @Transactional
+    public void leaveGroup(Long idGroup) throws ModelNotFoundException {
+
+        User user = utilService.userInSession();
+
+        Group group = groupRepository.findById(idGroup)
+                .orElseThrow(() ->
+                        new ModelNotFoundException(Group.class, idGroup)
+                );
+
+        // Buscar la relación GroupMember específica
+        GroupMember membership = groupMemberRepository
+                .findByGroupIdGroupAndUserIdUserAndRole(
+                        group.getIdGroup(),
+                        user.getIdUser(),
+                        GroupRole.MEMBER
+                )
+                .orElse(null);
+
+        // Idempotencia: si no es miembro, no hacemos nada
+        if (membership == null) {
+            log.info(
+                    "Usuario {} no está inscrito como MEMBER en el grupo {}",
+                    user.getIdUser(),
+                    group.getIdGroup()
+            );
+            return;
+        }
+
+        // Eliminamos la relación
+        groupMemberRepository.delete(membership);
+
+        log.info(
+                "🔴 Usuario {} salió del grupo {}",
+                user.getIdUser(),
+                group.getIdGroup()
+        );
+    }
+
+
 
 
 
