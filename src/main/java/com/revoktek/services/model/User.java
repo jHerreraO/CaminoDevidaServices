@@ -48,6 +48,7 @@ public class User implements UserDetails {
     private String paternalSurname;
     private String maternalSurname;
     private String residencyCity;
+    private Integer numberDependents;
     @Lob
     @Column(columnDefinition = "LONGTEXT")
     private String dependents;

@@ -123,6 +123,7 @@ public class UserService implements UserDetailsService {
                 .maternalSurname(dto.getMaternalSurname())
                 .residencyCity(dto.getResidenceCity())
                 .dependents(dto.getDependents())
+                .numberDependents(dto.getNumberDependents())
                 .authorities(List.of(Authority.valueOf(dto.getRole())))
                 .build();
         user.setUserRegister(utilService.userNameInSession() != null ? utilService.userNameInSession() : null);
@@ -206,7 +207,8 @@ public class UserService implements UserDetailsService {
                            String maternalSurname,
                            String residenceCity,
                            String phone,
-                           String dependents)
+                           String dependents,
+                           Integer numberDependents)
             throws DuplicateModelException {
 
         // 1. Buscar usuario
@@ -253,6 +255,10 @@ public class UserService implements UserDetailsService {
         // 7. Dependientes
         if (dependents != null) {
             user.setDependents(dependents);
+        }
+
+        if (numberDependents != null) {
+            user.setNumberDependents(numberDependents);
         }
 
         // 8. Guardar cambios

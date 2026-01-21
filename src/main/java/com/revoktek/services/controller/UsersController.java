@@ -131,7 +131,8 @@ public class UsersController {
             @RequestParam(required = false) String maternalSurname,
             @RequestParam(required = false) String residenceCity,
             @RequestParam(required = false) String phone,
-            @RequestParam(required = false) String dependents
+            @RequestParam(required = false) String dependents,
+            @RequestParam(required = false) Integer numberDependents
     ) throws DuplicateModelException {
 
         userService.updateUser(
@@ -143,7 +144,8 @@ public class UsersController {
                 maternalSurname,
                 residenceCity,
                 phone,
-                dependents
+                dependents,
+                numberDependents
         );
 
         return ResponseEntity.ok(new Message(true, "Usuario actualizado con éxito"));

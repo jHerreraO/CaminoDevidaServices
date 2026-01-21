@@ -16,4 +16,5 @@ public class UserSaveDTO {
     private String dependents;
     private String phone;
     private String role;
+    private Integer numberDependents;
 }
