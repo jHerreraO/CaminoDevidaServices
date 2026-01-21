@@ -247,6 +247,24 @@ public class GroupController {
         return ResponseEntity.ok(message);
     }
 
+    /**
+     * Elimina un grupo del sistema (ADMIN).
+     */
+    @DeleteMapping("/{idGroup}")
+    public ResponseEntity<Message> deleteGroup(
+            @PathVariable Long idGroup
+    ) throws ModelNotFoundException {
+        groupService.deleteGroup(idGroup);
+
+        Message message = new Message(
+                true,
+                "Grupo eliminado correctamente"
+        );
+
+        return ResponseEntity.ok(message);
+    }
+
+
 
 
 

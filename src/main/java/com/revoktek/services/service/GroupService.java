@@ -494,9 +494,33 @@ public class GroupService {
         );
     }
 
+    /**
+     * Elimina un grupo del sistema.
+     *
+     * Reglas:
+     * - Solo ADMIN puede eliminar
+     * - El grupo puede tener miembros e instructores
+     * - Se eliminan todas las relaciones (GroupMember)
+     */
+    @Transactional
+    public void deleteGroup(Long idGroup) throws ModelNotFoundException {
 
+        User admin = utilService.userInSession();
 
+        if (!admin.getSimpleAuthorities().contains(Authority.ADMIN)) {
+            throw new IllegalStateException("No autorizado para eliminar grupos");
+        }
 
+        Group group = groupRepository.findById(idGroup)
+                .orElseThrow(() ->
+                        new ModelNotFoundException(Group.class, idGroup)
+                );
+
+        groupRepository.delete(group);
+
+        log.info("🔴 Grupo {} eliminado por el administrador {}",
+                group.getIdGroup(), admin.getIdUser());
+    }
 
     /**
      * Inicializa los grupos base del sistema.
