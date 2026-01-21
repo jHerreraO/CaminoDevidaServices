@@ -1,6 +1,7 @@
 package com.revoktek.services.service;
 
 
+import com.revoktek.services.model.AppConfig;
 import com.revoktek.services.model.Group;
 import com.revoktek.services.model.GroupMember;
 import com.revoktek.services.model.User;
@@ -12,6 +13,7 @@ import com.revoktek.services.model.dto.memberGroups.GroupDetailDTO;
 import com.revoktek.services.model.dto.memberGroups.GroupUserDTO;
 import com.revoktek.services.model.enums.Authority;
 import com.revoktek.services.model.enums.GroupRole;
+import com.revoktek.services.repository.AppConfigRepository;
 import com.revoktek.services.repository.GroupMemberRepository;
 import com.revoktek.services.repository.GroupRepository;
 import com.revoktek.services.repository.UserRepository;
@@ -36,6 +38,7 @@ public class GroupService {
     private final UtilService utilService;
     private final UserRepository userRepository;
     private final GroupMemberRepository groupMemberRepository;
+    private final AppConfigRepository appConfigRepository;
 
     /**
      * Obtiene un listado preliminar de todos los grupos registrados.
@@ -533,6 +536,15 @@ public class GroupService {
      */
     @Transactional
     public void initializeDefaultGroups() {
+
+        boolean alreadyInitialized =
+                appConfigRepository.existsByConfigKey("DEFAULT_GROUPS_INITIALIZED");
+
+        if (alreadyInitialized) {
+            log.info("🟡 Grupos iniciales ya fueron creados, se omite inicialización");
+            return;
+        }
+
         List<Group> defaultGroups = List.of(
                 Group.builder()
                         .name("Alpha")
@@ -640,21 +652,13 @@ public class GroupService {
         );
 
 
-        for (Group group : defaultGroups) {
+        groupRepository.saveAll(defaultGroups);
 
-            boolean exists = groupRepository.existsByNameAndDayOfWeek(
-                    group.getName(),
-                    group.getDayOfWeek()
-            );
+        appConfigRepository.save(
+                new AppConfig("DEFAULT_GROUPS_INITIALIZED", "true")
+        );
 
-            if (exists) {
-                log.info("🟡 Grupo ya existe, se omite inicialización: {}", group.getName());
-                continue;
-            }
-
-            groupRepository.save(group);
-            log.info("🟢 Grupo inicializado: {}", group.getName());
-        }
+        log.info("🟢 Grupos iniciales creados correctamente");
     }
 
 
