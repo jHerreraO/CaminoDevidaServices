@@ -57,6 +57,12 @@ public class User implements UserDetails {
     @JsonIgnore
     private List<GroupMember> groups = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<WorkshipMember> worships = new ArrayList<>();
+
+
+
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
