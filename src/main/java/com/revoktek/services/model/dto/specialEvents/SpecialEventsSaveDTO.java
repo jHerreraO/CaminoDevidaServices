@@ -1,18 +1,16 @@
-package com.revoktek.services.model.dto.workships;
+package com.revoktek.services.model.dto.specialEvents;
 
-
+import java.time.LocalTime;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalTime;
-
 @Getter
 @Setter
-public class WorshipSaveDTO {
+public class SpecialEventsSaveDTO {
     private String name;
     private String address;
     private String phone;
     private String dayOfWeek;
     private LocalTime hour;
-    private Integer numberSlots;
+    private Integer numberOfSlots;
 }

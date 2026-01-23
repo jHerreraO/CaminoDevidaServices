@@ -1,10 +1,7 @@
 package com.revoktek.services.controller;
 
 
-import com.revoktek.services.rulesException.DuplicateModelException;
-import com.revoktek.services.rulesException.EnumInvalidArgumentException;
-import com.revoktek.services.rulesException.ModelNotFoundException;
-import com.revoktek.services.rulesException.UniqueFieldException;
+import com.revoktek.services.rulesException.*;
 import com.revoktek.services.utils.Message;
 import jakarta.validation.ConstraintViolationException;
 import lombok.Getter;
@@ -31,6 +28,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ExceptionController {
     private static final Logger log = LoggerFactory.getLogger(ExceptionController.class);
+
+    @ExceptionHandler(SpecialEventExpiredException.class)
+    public ResponseEntity<Message> visitExpiredException(SpecialEventExpiredException e) {
+        log.error("VisitExpiredException: {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Message(false, e.getMessage(), ""));
+    }
 
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<Message> IllegalStateException(IllegalStateException ise) {

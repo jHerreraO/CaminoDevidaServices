@@ -30,6 +30,7 @@ public class SpecialEvent {
     private DayOfWeek dayOfWeek;
     private LocalTime hour;
     private Integer numberOfSlots;
+    private Integer slotsRemaining;
 
     @ManyToOne
     @JoinColumn(name = "user_id_responsible", referencedColumnName = "idUser")

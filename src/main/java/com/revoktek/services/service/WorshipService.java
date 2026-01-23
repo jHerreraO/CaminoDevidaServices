@@ -7,7 +7,6 @@ import com.revoktek.services.model.dto.workships.WorshipListDTO;
 import com.revoktek.services.model.dto.workships.WorshipSaveDTO;
 import com.revoktek.services.model.enums.Authority;
 import com.revoktek.services.model.enums.GroupRole;
-import com.revoktek.services.repository.UserRepository;
 import com.revoktek.services.repository.WorshipMemberRepository;
 import com.revoktek.services.repository.WorshipRepository;
 import com.revoktek.services.rulesException.EnumInvalidArgumentException;
