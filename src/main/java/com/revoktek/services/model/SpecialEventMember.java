@@ -12,24 +12,25 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(
-        name = "worship_members",
+        name = "special_event_members",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"worship_id", "user_id"})
+                @UniqueConstraint(columnNames = {"special_event_id", "user_id"})
         }
 )
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class WorshipMember {
+public class SpecialEventMember {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "worship_id", nullable = false)
+    @JoinColumn(name = "special_event_id", nullable = false)
     @JsonIgnore
-    private Worship worship;
+    private SpecialEvent specialEvent;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
