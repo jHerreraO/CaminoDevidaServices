@@ -10,7 +10,6 @@ import java.util.List;
 @Repository
 public interface GroupRepository extends JpaRepository<Group,Long> {
 
-    boolean existsByNameAndDayOfWeek(String name, DayOfWeek dayOfWeek);
     List<Group> findByNameContainingIgnoreCase(String name);
 
 }

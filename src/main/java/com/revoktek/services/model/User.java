@@ -59,7 +59,7 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<WorkshipMember> worships = new ArrayList<>();
+    private List<WorshipMember> worships = new ArrayList<>();
 
 
 

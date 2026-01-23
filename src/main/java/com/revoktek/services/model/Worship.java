@@ -20,7 +20,7 @@ import java.util.List;
 public class Worship {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idWorkship;
+    private Long idWorship;
     private String name;
     private String address;
     private String phone;
@@ -34,9 +34,9 @@ public class Worship {
     @JoinColumn(name = "user_id_responsible", referencedColumnName = "idUser")
     private User userResponsible;
 
-    @OneToMany(mappedBy = "workship", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "worship", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<WorkshipMember> members = new ArrayList<>();
+    private List<WorshipMember> members = new ArrayList<>();
 
 
 }

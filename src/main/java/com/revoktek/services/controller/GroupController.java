@@ -55,7 +55,7 @@ public class GroupController {
         return ResponseEntity.ok(
                 new Message(
                         true,
-                        "Groups retrieved successfully",
+                        "Lista de grupos registrados",
                         groupService.findAll()
                 )
         );
@@ -85,7 +85,7 @@ public class GroupController {
         groupService.save(dto);
 
         return ResponseEntity.ok(
-                new Message(true, "Group created successfully")
+                new Message(true, "Grupo creado con exito")
         );
     }
 
@@ -135,7 +135,7 @@ public class GroupController {
         groupService.update(dto, groupId);
 
         return ResponseEntity.ok(
-                new Message(true, "Group updated successfully")
+                new Message(true, "Grupo actualizado con exito")
         );
     }
 

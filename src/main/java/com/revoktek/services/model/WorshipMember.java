@@ -21,13 +21,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class WorkshipMember {
+public class WorshipMember {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "workship_id", nullable = false)
+    @JoinColumn(name = "worship_id", nullable = false)
     @JsonIgnore
     private Worship worship;
 
