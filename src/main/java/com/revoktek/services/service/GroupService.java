@@ -59,17 +59,30 @@ public class GroupService {
     @Transactional(readOnly = true)
     public List<GroupListDTO> findAll() {
 
-        return groupRepository.findAll()
-                .stream()
-                .map(group -> GroupListDTO.builder()
-                        .idGroup(group.getIdGroup())
-                        .name(group.getName())
-                        .address(group.getAddress())
-                        .phone(group.getPhone())
-                        .dayOfWeek(group.getDayOfWeek().name())
-                        .hour(group.getHour())
-                        .build()
-                )
+        List<Group> groups =
+                groupRepository.findAll();
+
+        return groups.stream()
+                .map(group -> {
+
+                    List<String> instructors =
+                            group.getMembers() == null
+                                    ? List.of()
+                                    : group.getMembers().stream()
+                                    .filter(m -> m.getRole() == GroupRole.INSTRUCTOR)
+                                    .map(m -> m.getUser().getNames() + " " + m.getUser().getPaternalSurname() + " " +m.getUser().getMaternalSurname() ) // o nombre público
+                                    .toList();
+
+                    return GroupListDTO.builder()
+                            .idGroup(group.getIdGroup())
+                            .name(group.getName())
+                            .address(group.getAddress())
+                            .phone(group.getPhone())
+                            .dayOfWeek(group.getDayOfWeek().name())
+                            .hour(group.getHour())
+                            .instructors(instructors) // vacío si no hay
+                            .build();
+                })
                 .toList();
     }
 
