@@ -268,7 +268,7 @@ public class GroupController {
 
         Message message = new Message(
                 true,
-                "Has salido del grupo correctamente"
+                "Instructor removido del grupo correctamente"
         );
 
         return ResponseEntity.ok(message);
