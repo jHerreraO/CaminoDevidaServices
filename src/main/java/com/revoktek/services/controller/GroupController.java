@@ -248,6 +248,33 @@ public class GroupController {
     }
 
     /**
+     * Permite al usuario autenticado salirse de un grupo como MIEMBRO.
+     *
+     * Reglas:
+     * - El usuario debe estar autenticado
+     * - Solo se permite salir si el rol es MEMBER
+     * - Operación idempotente (si no pertenece al grupo, no falla)
+     *
+     * @param idGroup identificador del grupo
+     * @return mensaje de confirmación
+     */
+    @DeleteMapping("/removeInstructor")
+    public ResponseEntity<Message> leaveInstructorGroup(
+            @RequestParam Long idGroup,
+            @RequestParam Long idInstructor
+    ) throws ModelNotFoundException {
+
+        groupService.leaveInstructorFromGroup(idGroup,idInstructor);
+
+        Message message = new Message(
+                true,
+                "Has salido del grupo correctamente"
+        );
+
+        return ResponseEntity.ok(message);
+    }
+
+    /**
      * Elimina un grupo del sistema (ADMIN).
      */
     @DeleteMapping("/{idGroup}")

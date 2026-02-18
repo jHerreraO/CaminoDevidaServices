@@ -28,6 +28,7 @@ import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -492,6 +493,60 @@ public class GroupService {
 
         log.info(
                 "🔴 Usuario {} salió del grupo {}",
+                user.getIdUser(),
+                group.getIdGroup()
+        );
+    }
+
+    /**
+     * Permite al usuario autenticado salirse de un grupo como MIEMBRO.
+     *
+     * Reglas:
+     * - El usuario debe estar autenticado
+     * - El grupo debe existir
+     * - Solo aplica para rol MEMBER
+     * - Operación idempotente
+     */
+    @Transactional
+    public void leaveInstructorFromGroup(Long idGroup, Long idInstructor) throws ModelNotFoundException {
+
+        Optional<User> optionalUser = userRepository.findById(idInstructor);
+
+        if(!optionalUser.isPresent()){
+            throw new ModelNotFoundException(User.class,"");
+        }
+
+        User user = optionalUser.get();
+
+        Group group = groupRepository.findById(idGroup)
+                .orElseThrow(() ->
+                        new ModelNotFoundException(Group.class, idGroup)
+                );
+
+        // Buscar la relación GroupMember específica
+        GroupMember membership = groupMemberRepository
+                .findByGroupIdGroupAndUserIdUserAndRole(
+                        group.getIdGroup(),
+                        user.getIdUser(),
+                        GroupRole.INSTRUCTOR
+                )
+                .orElse(null);
+
+        // Idempotencia: si no es miembro, no hacemos nada
+        if (membership == null) {
+            log.info(
+                    "Usuario {} no está inscrito como INSTRUCTOR en el grupo {}",
+                    user.getIdUser(),
+                    group.getIdGroup()
+            );
+            return;
+        }
+
+        // Eliminamos la relación
+        groupMemberRepository.delete(membership);
+
+        log.info(
+                "🔴 Instructor {} salió del grupo {}",
                 user.getIdUser(),
                 group.getIdGroup()
         );
