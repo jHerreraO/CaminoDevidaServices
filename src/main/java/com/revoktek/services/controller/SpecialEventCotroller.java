@@ -189,9 +189,9 @@ public class SpecialEventCotroller {
      */
     @DeleteMapping("/{idSpecialEvent}")
     public ResponseEntity<Message> deleteWorship(
-            @PathVariable Long idSepcialEvent
+            @PathVariable Long idSpecialEvent
     ) throws ModelNotFoundException {
-        specialEventService.deleteSpecialEvent(idSepcialEvent);
+        specialEventService.deleteSpecialEvent(idSpecialEvent);
 
         Message message = new Message(
                 true,
