@@ -168,7 +168,7 @@ public class SpecialEventService {
             specialEvent.setHour(dto.getHour());
         }
 
-        if (dto.getNumberOfSlots() != null) {
+        if (dto.getNumberOfSlots() != null && dto.getNumberOfSlots() >= (specialEvent.getNumberOfSlots() - specialEvent.getSlotsRemaining())) {
             specialEvent.setNumberOfSlots(dto.getNumberOfSlots());
         }
 

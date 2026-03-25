@@ -21,5 +21,6 @@ public class GroupListDTO {
     private String dayOfWeek;
     private LocalTime hour;
     private List<String> instructors; // nombres o emails
+    private List<InstructorDTO> instructorsData;
 }
 

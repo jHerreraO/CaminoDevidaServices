@@ -5,10 +5,7 @@ import com.revoktek.services.model.AppConfig;
 import com.revoktek.services.model.Group;
 import com.revoktek.services.model.GroupMember;
 import com.revoktek.services.model.User;
-import com.revoktek.services.model.dto.groups.GroupAssignInstructorsDTO;
-import com.revoktek.services.model.dto.groups.GroupListDTO;
-import com.revoktek.services.model.dto.groups.GroupSaveDTO;
-import com.revoktek.services.model.dto.groups.PublicGroupDTO;
+import com.revoktek.services.model.dto.groups.*;
 import com.revoktek.services.model.dto.memberGroups.GroupDetailDTO;
 import com.revoktek.services.model.dto.memberGroups.GroupUserDTO;
 import com.revoktek.services.model.enums.Authority;
@@ -65,12 +62,25 @@ public class GroupService {
         return groups.stream()
                 .map(group -> {
 
-                    List<String> instructors =
+                    List<InstructorDTO> instructors =
                             group.getMembers() == null
                                     ? List.of()
                                     : group.getMembers().stream()
                                     .filter(m -> m.getRole() == GroupRole.INSTRUCTOR)
-                                    .map(m -> m.getUser().getNames() + " " + m.getUser().getPaternalSurname() + " " +m.getUser().getMaternalSurname() ) // o nombre público
+                                    .map(m -> {
+                                        User user = m.getUser();
+
+                                        String fullName = String.join(" ",
+                                                user.getNames(),
+                                                user.getPaternalSurname(),
+                                                user.getMaternalSurname()
+                                        );
+
+                                        return InstructorDTO.builder()
+                                                .idUser(user.getIdUser())
+                                                .fullName(fullName)
+                                                .build();
+                                    })
                                     .toList();
 
                     return GroupListDTO.builder()
@@ -80,7 +90,7 @@ public class GroupService {
                             .phone(group.getPhone())
                             .dayOfWeek(group.getDayOfWeek().name())
                             .hour(group.getHour())
-                            .instructors(instructors) // vacío si no hay
+                            .instructorsData(instructors) // vacío si no hay
                             .build();
                 })
                 .toList();
