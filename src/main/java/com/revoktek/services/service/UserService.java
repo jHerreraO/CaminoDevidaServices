@@ -235,26 +235,26 @@ public class UserService implements UserDetailsService {
 
         //  4. Actualizar nombres
         if (names != null) {
-            user.setNames(names);
+            user.setNames(utilService.fixEncoding(names));
         }
 
         //  5. Apellidos
         if (paternalSurname != null) {
-            user.setPaternalSurname(paternalSurname);
+            user.setPaternalSurname(utilService.fixEncoding(paternalSurname));
         }
 
         if (maternalSurname != null) {
-            user.setMaternalSurname(maternalSurname);
+            user.setMaternalSurname(utilService.fixEncoding(maternalSurname));
         }
 
         // 6. Ciudad de residencia
         if (residenceCity != null) {
-            user.setResidencyCity(residenceCity);
+            user.setResidencyCity(utilService.fixEncoding(residenceCity));
         }
 
         // 7. Dependientes
         if (dependents != null) {
-            user.setDependents(dependents);
+            user.setDependents(utilService.fixEncoding(dependents));
         }
 
         if (numberDependents != null) {
